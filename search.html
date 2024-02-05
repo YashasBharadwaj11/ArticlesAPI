@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News API Demo</title>
+</head>
+<body>
+    <h1>Latest Accident News</h1>
+
+    <!-- Search input >
+    <label for="searchInput">Search News:</label>
+    <input type="text" id="searchInput" placeholder="Enter keywords">
+    <button onclick="searchNews()">Search</button-->
+
+    <div id="news-container"></div>
+
+    <script>
+        // Function to fetch news data from the Flask API based on search keywords
+        async function searchNews() {
+            //const searchInput = document.getElementById('searchInput').value;
+            
+            //alert(searchInput);
+            try {
+                //const response = await fetch(`http://127.0.0.1:5000/get_news?search=${encodeURIComponent(searchInput)}`);
+                const response = await fetch(`http://127.0.0.1:5000/get_news?search=accident`);
+                
+                const data = await response.json();
+                // Display the news data
+                const newsContainer = document.getElementById('news-container');
+                newsContainer.innerHTML = ''; // Clear previous content
+
+                if (data.error) {
+                    newsContainer.innerHTML = `<p>Error: ${data.error}</p>`;
+                } else {
+                    data.articles.forEach(article => {
+                        const articleElement = document.createElement('div');
+                        articleElement.innerHTML = `
+                            <h2>${article.title}</h2>
+                            <p>${article.description}</p>
+                            <p>Author: ${article.author}</p>
+                            <p>Published At: ${article.publishedAt}</p>
+                            <hr>
+                        `;
+                        newsContainer.appendChild(articleElement);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            }
+        }
+
+        // Fetch news on page load
+        window.onload = searchNews;
+    </script>
+</body>
+</html>
